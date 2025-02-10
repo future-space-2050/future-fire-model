@@ -1,7 +1,5 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sentence_transformers import SentenceTransformer
-from geopy.distance import geodesic
-from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 import pandas as pd
 import joblib
@@ -50,14 +48,12 @@ class DataPreprocessor:
         for col in ["Gender", "max_prob"]:
             if col in data.columns:
                 data.drop(col, axis=1, inplace=True)
-
         return data
 
     
     def clean_user_data(self, user_data):
         """Clean and preprocess user data"""
         return self.preprocess(pd.DataFrame([user_data])).iloc[0]
-
 
 
     def compute_base_embeddings(self, data):
@@ -70,4 +66,3 @@ class DataPreprocessor:
     def compute_new_user_embedding(self, user_data):
         """Compute embedding for a single new user"""
         return self.sbert_model.encode([user_data['Interests']], convert_to_numpy=True)[0]
-
