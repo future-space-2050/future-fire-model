@@ -36,4 +36,3 @@ class JsonToDataFrameError(Exception):
     def __repr__(self):
         return f"JsonToDataFrameError('{self.message}')"
     
-    

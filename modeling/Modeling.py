@@ -4,7 +4,7 @@ from Recommender import Recommender
 import pandas as pd
 
 
-FILE_PATH = "/content/drive/MyDrive/Data Science/Future Space/User_profile.csv"
+FILE_PATH = r"Modeling\DataSet\User_profile.csv"
 data = pd.read_csv(FILE_PATH)
 data = data.drop(columns=["max_prob"])
 
@@ -25,4 +25,6 @@ recommender = Recommender(preprocessed_data, cosine_similarities, top=10)
 recommendations = recommender.get_recommendations()
 print(recommendations)
 
-data.iloc[recommendations]
+print((data.iloc[recommendations]))
+
+print(user)
