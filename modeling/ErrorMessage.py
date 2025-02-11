@@ -36,3 +36,15 @@ class JsonToDataFrameError(Exception):
     def __repr__(self):
         return f"JsonToDataFrameError('{self.message}')"
     
+class ModelingError(Exception):
+    """Custom exception for modeling errors."""
+    def __init__(self, message):
+        self.message = message
+        super().__init__(self.message)
+    
+    def __str__(self):
+        return f"ModelingError: {self.message}"
+    
+    def __repr__(self):
+        return f"ModelingError('{self.message}')"
+    

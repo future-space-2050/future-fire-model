@@ -17,7 +17,7 @@ class User:
         """Convert JSON user data to a DataFrame."""
         try:
             self.user_df = pd.DataFrame([self.user_data])
-            self.user_id = self.user_df["User ID"].values[0]
+            self.user_id = self.user_df["User_ID"].values[0]
             return self.user_df
         except Exception as e:
             raise JsonToDataFrameError(f"Error converting JSON to DataFrame: {e}")

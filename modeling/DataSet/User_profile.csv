@@ -1,4 +1,4 @@
--User ID,Name,City,Birth Date,Interests,Gender,Interest Categories,max_prob,Profession,Latitude,Longitude,Birth Year,Age
+User_ID,Name,City,Birth_Date,Interests,Gender,Interest_Categories,max_prob,Profession,Latitude,Longitude,Birth_Year,Age
 1,Kiilolee Daawwitii,Asella,2007-06-21,"['Songwriting', 'Filmmaking', 'Sculpting', 'Art', 'Coaching', 'Diving', 'Media Production', 'Museums']",Female,"['Animals & Nature', 'Arts & Creativity', 'Science & Technology', 'Business & Entrepreneurship', 'Cultural & Social Activities']",4,Digital Content Creator,8.58209883306169,38.88512932187844,2007,17
 2,Jaalalii Caalaa,Wolaita Sodo,1987-03-05,"['Beekeeping', 'Aquariums', 'Fishing', 'Photography', 'Visual Communication & Design', 'Track & Field']",Female,"['Animals & Nature', 'Arts & Creativity', 'Sports & Fitness']",3,Agricultural Scientist,6.7002150628725525,37.837659815809964,1987,37
 3,Akkashee Ammayyuu,Selenko,1969-05-16,"['Investing', 'Technology', 'Business', 'Sailing']",Female,"['Sports & Fitness', 'Science & Technology', 'Business & Entrepreneurship']",2,Auditor,13.710866993738911,39.12417030226186,1969,55
