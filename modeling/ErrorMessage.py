@@ -48,3 +48,14 @@ class ModelingError(Exception):
     def __repr__(self):
         return f"ModelingError('{self.message}')"
     
+class DataParserError(Exception):
+    """Custom exception for data parsing errors."""
+    def __init__(self, message):
+        self.message = message
+        super().__init__(self.message)
+        
+    def __str__(self):
+        return f"DataParserError: {self.message}"
+    
+    def __repr__(self):
+        return f"DataParserError('{self.message}')"

@@ -78,7 +78,6 @@ class DataPreprocessor:
         try:
             existing_index = self.is_in_data()
             if existing_index is not None:
-                print("User already exists in the dataset.")
                 self.user_index = existing_index
             else:
                 user_df = self.user.copy()
@@ -86,7 +85,6 @@ class DataPreprocessor:
                 for col in missing_cols:
                     user_df[col] = 0 
                 user_df = user_df[self.data.columns]
-                print("New User Data")
                 self.data = pd.concat([self.data, user_df], ignore_index=True)
                 self.user_index = self.data.index[-1]
             return self.data
@@ -110,15 +108,9 @@ class DataPreprocessor:
             raise DataPreprocessorError(f"Error computing distance from user: {e}")
 
     def is_in_data(self):
-        print("*****************************************************************")
-        print(self.user.columns)
-        print("*****************************************************************")
-        """Check if the target user is already in the dataset."""
         try:
             if self.user["User_ID"].values[0] in self.data["User_ID"].values:
-                print("You already have")
                 return self.data[self.data["User_ID"] == self.user["User_ID"].values[0]].index[0]
-            print("You are not in the dataset")
             return None
         except Exception as e:
             raise DataPreprocessorError(f"Error checking if user is in data: {e}")
@@ -142,5 +134,4 @@ class DataPreprocessor:
 
     def get_user_index(self):
         """Get the index of the target user in the preprocessed data."""
-        print(f"Getting user index == {self.user_index}")
         return self.user_index
