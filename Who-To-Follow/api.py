@@ -9,10 +9,12 @@ from User import User
 import pandas as pd
 from flask_cors import CORS
 
+USER_FILE_PATH = r"./DataSet/User_profile.csv"
+
 app = Flask(__name__)
 CORS(app)  
 
-data = pd.read_csv('./DataSet/User_profile.csv')
+data = pd.read_csv(USER_FILE_PATH)
 
 # External API URL to fetch user data (type is a dynamic query parameter)
 backend_api_base_url = "https://future-fire-backend.onrender.com/auth/users/model"

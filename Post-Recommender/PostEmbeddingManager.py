@@ -2,9 +2,10 @@ import os
 import numpy as np
 import pandas as pd
 from sentence_transformers import SentenceTransformer
+from CosineSimilarityRecommender import *
 
 class PostEmbeddingManager:
-    def __init__(self, post_file_path="", post_embeddings_file=""):
+    def __init__(self, post_file_path=POST_FILE_PATH, post_embeddings_file=EMBEDDING_FILE_PATH):
         self.post_file_path = post_file_path
         self.post_embeddings_file = post_embeddings_file
         self.embedder = SentenceTransformer('all-MiniLM-L6-v2')

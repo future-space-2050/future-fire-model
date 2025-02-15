@@ -5,7 +5,7 @@ class PostData:
         self.post_content = None
         self.category = None
         
-    def process_post(self):
+    def _process_post(self):
         """Extract post_id, post_content, and category from JSON post data."""
         try:
             self.post_id = self.post_data["post_id"]
@@ -17,14 +17,15 @@ class PostData:
     def to_dict(self):
         """Convert post data to a dictionary."""
         self.post_id = self.post_data["post_id"]
-        self.detect_tags()
+        self._detect_tags()
+        self._process_post()
         return {
             "post_id": self.post_id,
             "content": self.post_content,
             "category": self.category
         }
         
-    def detect_tags(self):
+    def _detect_tags(self):
         """Extract relevant tags from post content."""
         content, tags = self.post_data["content"].split('#')
         self.post_content = content
