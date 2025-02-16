@@ -35,8 +35,10 @@ class PostEmbeddingManager:
 
             self._append_to_csv(new_post)
             self._update_embeddings(new_post)
+            return True
         else:
             print("Post already exists")
+            return False
 
     def __is_post_exist(self):
         try:
