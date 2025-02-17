@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 from sentence_transformers import SentenceTransformer
 from CosineSimilarityRecommender import *
+from CosineSimilarityRecommender import POST_FILE_PATH, EMBEDDING_FILE_PATH, USERS_FILE_PATH
 
 class PostEmbeddingManager:
     def __init__(self, post_file_path=POST_FILE_PATH, post_embeddings_file=EMBEDDING_FILE_PATH):
@@ -40,7 +41,7 @@ class PostEmbeddingManager:
             print("Post already exists")
             return False
 
-    def __is_post_exist(self):
+    def __is_post_exist(self, new_post):
         try:
             posts_df = pd.read_csv(
                 self.post_file_path, 
