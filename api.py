@@ -27,9 +27,9 @@ logger = logging.getLogger(__name__)
 app = Flask(__name__)
 
 # File paths
-POST_FILE_PATH = "post_recommender/DataSet/posts.csv"
-USERS_FILE_PATH = "who_to_follow/DataSet/User_profile.csv"
-EMBEDDING_FILE_PATH = "post_recommender/DataSet/post_embeddings.csv"
+POST_FILE_PATH = "post_recommender/Post DataSet/POST_DATASET.csv"
+USERS_FILE_PATH = r"who_to_follow\DataSet\User_profile.csv"
+EMBEDDING_FILE_PATH = "post_recommender/Post DataSet/post_embeddings.npy"
 
 backend_api_base_url = "https://future-fire-backend.onrender.com/auth/users/model"
 
@@ -75,7 +75,7 @@ def get_user_recommendations():
         
         user_list = [User(user_data=u).to_dataframe() for u in user_data_list["data"]]
         user_df = pd.concat(user_list)
-        data = pd.read_csv(USER_FILE_PATH)
+        data = pd.read_csv(USERS_FILE_PATH)
         data_preprocessor = DataPreprocessor(data, user_df)
         preprocessed_data = data_preprocessor.preprocess()
         cosine_similarities = calculate_similarities(preprocessed_data, data_preprocessor.get_user_index())

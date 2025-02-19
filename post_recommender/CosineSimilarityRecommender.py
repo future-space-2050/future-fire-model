@@ -6,9 +6,9 @@ import faiss
 from sklearn.metrics.pairwise import cosine_similarity
 
 
-POST_FILE_PATH = r"Post-Recommender\Post Dataset\POST_DATASET.csv"
-EMBEDDING_FILE_PATH = r"Post-Recommender\Post Dataset\POST_EMBEDDINGS.npy"
-USERS_FILE_PATH = r"Who-To-Follow\DataSet\User_profile.csv"
+POST_FILE_PATH = r"post_recommender\Post Dataset\POST_DATASET.csv"
+EMBEDDING_FILE_PATH = r"post_recommender\Post Dataset\POST_EMBEDDINGS.npy"
+USERS_FILE_PATH = r"who_to_follow\DataSet\User_profile.csv"
 
 
 class CosineSimilarityRecommender:

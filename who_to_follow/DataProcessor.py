@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 from sklearn.preprocessing import MultiLabelBinarizer, MinMaxScaler
 
-from error_message import *
+from who_to_follow.error_message import *
 
 class DataPreprocessor:
     def __init__(self, data, user):

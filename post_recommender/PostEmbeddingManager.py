@@ -2,8 +2,8 @@ import os
 import numpy as np
 import pandas as pd
 from sentence_transformers import SentenceTransformer
-from .CosineSimilarityRecommender import *
-from .CosineSimilarityRecommender import POST_FILE_PATH, EMBEDDING_FILE_PATH, USERS_FILE_PATH
+from post_recommender.CosineSimilarityRecommender import *
+
 
 class PostEmbeddingManager:
     def __init__(self, post_file_path=POST_FILE_PATH, post_embeddings_file=EMBEDDING_FILE_PATH):

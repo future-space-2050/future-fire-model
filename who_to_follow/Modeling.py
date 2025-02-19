@@ -1,8 +1,9 @@
 from sklearn.metrics.pairwise import cosine_similarity
-from DataProcessor import DataPreprocessor
-from error_message import *
-from User import User
-from Recommender import Recommender
+from who_to_follow.DataProcessor import DataPreprocessor
+from who_to_follow.error_message import *
+from who_to_follow.User import User
+from who_to_follow.Recommender import Recommender
+
 
 import pandas as pd
 
@@ -14,7 +15,7 @@ def calculate_similarities(preprocessed_data, user_index):
     return cosine_similarity(target_vector, data_matrix).flatten()
 
 
-def load_data(filename=r"Modeling\Dataset\user_profile.csv"):
+def load_data(filename=r"who_to_follow\DataSet\User_profile.csv"):
     """Load data from a CSV file."""
     try:
         return pd.read_csv(filename)

@@ -6,6 +6,7 @@ from postData import PostData
 from CosineSimilarityRecommender import *
 from PostEmbeddingManager import *
 
+
 # Setup logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
