@@ -1,0 +1,6 @@
+{
+    "python.analysis.extraPaths": [
+        "./Post-Recommender",
+        "./Who-To-Follow"
+    ]
+}
