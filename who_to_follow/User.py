@@ -1,8 +1,9 @@
 from datetime import datetime
+import os
 import pandas as pd
 import logging
 
-USER_FILE_PATH = r"Who-To-Follow\DataSet\User_profile.csv"
+USER_FILE_PATH = r"who_to_follow\DataSet\User_profile.csv"
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -29,26 +30,17 @@ class User:
         self.interests = None
         self.interest_categories = None
 
-        # Initialize attributes
-        print("user id")
+        
         self._set_get_user_id()
-        print("name")
         self._set_get_name()
-        print("birth date")
         self._set_get_birth_date()
-        print("city")
         self._set_get_city()
-        print("profession")
         self._set_get_profession()
-        print("age")
         self._calculate_age()
-        print("location")
         self.__location_mapping()
-        print("interests")
         self._set_get_interests()
-        print("interest categories")
         self._set_get_interest_categories()
-        print("BOOOM")
+       
         # self.save()
         
 
@@ -155,22 +147,29 @@ class User:
     def to_dataframe(self):
         return pd.DataFrame([self.to_dict()])
     
-    
+
     def save(self):
         try:
-            df = self.to_dataframe()  # Convert the object to a dataframe
-            # Check if the user data already exists in the CSV file
-            if df['user_id'].isin(pd.read_csv(USER_FILE_PATH)['user_id']).any():
-                # Append the new data if the user is not already in the CSV file
-                df.to_csv(USER_FILE_PATH, mode='a', header=not pd.read_csv(USER_FILE_PATH).empty, index=False)
-                logger.info(f"User data saved to {USER_FILE_PATH}")
+            df = self.to_dataframe()
+            
+            if os.path.exists(USER_FILE_PATH):
+                existing_df = pd.read_csv(USER_FILE_PATH)
+                
+                if self.user_id in existing_df["User_ID"].values:
+                    existing_df.loc[existing_df['User_ID'] == self.user_id, :] = df.values[0]
+                    logger.info(f"User data updated for user ID: {self.user_id}")
+                else:
+                    existing_df = pd.concat([existing_df, df], ignore_index=True)
+                    logger.info(f"User data added for user ID: {self.user_id}")
+                
+                existing_df.to_csv(USER_FILE_PATH, index=False)
             else:
-                logger.info("User data already exists in the file. Skipping save.")
+                df.to_csv(USER_FILE_PATH, mode='w', header=True, index=False)
+                logger.info(f"User data saved to {USER_FILE_PATH}")
+        
         except Exception as e:
             logger.error(f"Error saving user data: {str(e)}")
 
 
     def __repr__(self):
         return f"<User {self.user_id}: {self.name} ({self.age}y) from {self.city}>"
-    
-    

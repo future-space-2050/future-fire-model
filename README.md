@@ -1,1 +1,6 @@
 # future-fire-model
+
+### WHO TO FOLLOW RECOMMENDATION
+
+
+### POST RECOMMENDATION 
