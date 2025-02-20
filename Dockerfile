@@ -24,7 +24,6 @@ COPY --chown=appuser:appuser . .
 
 # Switch to non-root user
 USER appuser
-# this
 
-# CMD ["gunicorn","python", "main.py"] before
-CMD ["gunicorn", "-b", "0.0.0.0:5000", "main:app"]
+
+CMD ["python", "main.py"] 
