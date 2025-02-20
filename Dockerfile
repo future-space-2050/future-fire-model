@@ -26,4 +26,5 @@ COPY --chown=appuser:appuser . .
 USER appuser
 # this
 
-CMD ["python", "main.py"]
+# CMD ["gunicorn","python", "main.py"] before
+CMD ["gunicorn", "-b", "0.0.0.0:5000", "main:app"]

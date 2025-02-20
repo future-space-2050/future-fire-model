@@ -3,7 +3,7 @@ import os
 import pandas as pd
 import logging
 
-USER_FILE_PATH = r"who_to_follow\DataSet\User_profile.csv"
+USER_FILE_PATH = r"who_to_follow/DataSet/User_profile.csv"
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -16,7 +16,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class User:
-    _coordinates = pd.read_csv(r'who_to_follow\DataSet\coordinates.csv')
+    _coordinates = pd.read_csv(r'who_to_follow/DataSet/coordinates.csv')
     def __init__(self, user_data):
         self.user_data = user_data
         self.user_id = None

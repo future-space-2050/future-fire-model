@@ -31,9 +31,9 @@ logger = logging.getLogger(__name__)
 app = Flask(__name__)
 
 
-POST_FILE_PATH = "post_recommender/Post DataSet/POST_DATASET.csv"
-USERS_FILE_PATH = r"who_to_follow\DataSet\User_profile.csv"
-EMBEDDING_FILE_PATH = "post_recommender/Post DataSet/post_embeddings.npy"
+POST_FILE_PATH = r"post_recommender/Post Dataset/POST_DATASET.csv"
+USERS_FILE_PATH = r"who_to_follow/DataSet/User_profile.csv"
+EMBEDDING_FILE_PATH = r"post_recommender/Post Dataset/POST_EMBEDDINGS.npy"
 
 backend_api_base_url = "https://future-fire-backend.onrender.com/auth/users/model"
 
