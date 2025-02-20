@@ -22,8 +22,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY --chown=appuser:appuser who_to_follow/DataSet/ /app/who_to_follow/DataSet/
 COPY --chown=appuser:appuser . .
 
+# Expose port (recommended)
+EXPOSE 5000
+
 # Switch to non-root user
 USER appuser
 
-
-CMD ["python", "main.py"] 
+# Start command
+CMD ["gunicorn", "-b", "0.0.0.0:5000", "main:app"]
