@@ -25,5 +25,8 @@ COPY --chown=appuser:appuser . .
 # Switch to non-root user
 USER appuser
 
+# Expose port for Flask
+EXPOSE 5000
+
 # CMD ["gunicorn","python", "main.py"] before
 CMD ["gunicorn", "-b", "0.0.0.0:5000", "main:app"]
