@@ -20,7 +20,8 @@ class CosineSimilarityRecommender:
         
         self.user_data = user_data
         
-        self.embedder = SentenceTransformer('all-MiniLM-L6-v2')
+        self.embedder = SentenceTransformer('all-MiniLM-L6-v2', device='cpu')
+        self.embedder = quantize(model_size="8bit")
         
         self.post_embeddings = self._get_cached_embeddings()
         self.post_embeddings = self._normalize(self.post_embeddings)
