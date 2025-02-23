@@ -88,17 +88,27 @@ def get_user_recommendations():
             return jsonify({"error": "user_id is required"}), 400
 
         logger.info(f"Received recommendation request for user_id: {user_id}")
+        
+        # Ensure `data` is available and contains 'User_ID'
         if user_id not in data['User_ID'].values:
             return jsonify({"error": "User not found"}), 404
 
         recommended_profiles = calculate_cosine_simmilarity(user_id)
+
+        # Convert the recommended profiles list to a DataFrame
         recommended_profiles_df = pd.DataFrame(recommended_profiles)
-        if not recommended_profiles:
+
+        # Check if the DataFrame is empty
+        if recommended_profiles_df.empty:
             return jsonify({"message": "No recommendations found"}), 200
+
+        # Return the DataFrame as JSON
         return jsonify(recommended_profiles_df.to_dict(orient='records'))
+        
     except Exception as e:
         logger.error(f"Error getting user recommendations: {e}")
         return jsonify({"error": str(e)}), 500
+
 
 
 
