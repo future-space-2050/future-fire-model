@@ -68,7 +68,7 @@ def calculate_cosine_simmilarity(user_id):
         processed_data = preprocessor.preprocess()
         user_index = preprocessor.get_user_index()
         cosine_similarities = calculate_similarities(processed_data, user_index)
-        recommender = Recommender(processed_data, cosine_similarities, top=10)
+        recommender = Recommender(processed_data, cosine_similarities, top=1)
         recommended_indices = recommender.get_recommendations()
         top_20_simmilar_users_per_file[file] = recommended_indices
         

@@ -8,9 +8,9 @@ user_data = pd.read_csv(USER_FILE_PATH)
 top = 0 
 
 while top < len(user_data):
-    user_data_top = user_data.iloc[top:top + 250]
-    user_data_top.to_csv(f"user_profile_data_{(top // 250) + 1}.csv", index=False)
+    user_data_top = user_data.iloc[top:top + 100]
+    user_data_top.to_csv(f"user_profile_data_{(top // 100) + 1}.csv", index=False)
     
     top += 250
-    print(f"Saved user_profile_data_{top // 250}.csv")
+    print(f"Saved user_profile_data_{top // 100}.csv")
     
