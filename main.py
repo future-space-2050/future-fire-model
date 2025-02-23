@@ -12,6 +12,7 @@ from who_to_follow.DataProcessor import DataPreprocessor
 from sklearn.metrics.pairwise import cosine_similarity
 from who_to_follow.Modeling import calculate_similarities
 from who_to_follow.Recommender import Recommender
+from who_to_follow.simmilarity_calculator import calculate_cosine_simmilarity
 
 
 import sys
@@ -67,10 +68,8 @@ def get_post_recommendations():
         if single_user.empty:
             return jsonify({"error": "User not found"}), 404
         single_user = single_user[["Profession", "Interests", "Interest_Categories",]]
-        
         recommender = CosineSimilarityRecommender(posts_df=posts_dataframe, user_data=single_user)
         recommended_post_ids = recommender.recommend(11, use_faiss=False)
-        
         post_contents = [{"post_id": pid, "content": posts_dataframe.loc[posts_dataframe["post_id"] == pid, "content"].values[0]} for pid in recommended_post_ids]
         return jsonify({"recommended_posts": post_contents})
     except Exception as e:
@@ -92,26 +91,11 @@ def get_user_recommendations():
         if user_id not in data['User_ID'].values:
             return jsonify({"error": "User not found"}), 404
 
-        user_df = data[data['User_ID'] == user_id]
-        data_preprocessor = DataPreprocessor(data, user_df)
-        preprocessed_data = data_preprocessor.preprocess()
-
-        if preprocessed_data is None:
-            return jsonify({"error": "Data preprocessing failed"}), 500
-
-        user_index = data_preprocessor.get_user_index()
-        cosine_similarities = calculate_similarities(preprocessed_data, user_index)
-        recommender = Recommender(preprocessed_data, cosine_similarities, top=10)
-        recommended_indices = recommender.get_recommendations()
-        
-        print("Recommended Indices: ", recommended_indices)
-
-        if not recommended_indices:
+        recommended_profiles = calculate_cosine_simmilarity(user_id)
+        recommended_profiles_df = pd.DataFrame(recommended_profiles)
+        if not recommended_profiles:
             return jsonify({"message": "No recommendations found"}), 200
-
-        
-        recommended_profiles = data.iloc[recommended_indices]
-        return jsonify(recommended_profiles.to_dict(orient='records'))
+        return jsonify(recommended_profiles_df.to_dict(orient='records'))
     except Exception as e:
         logger.error(f"Error getting user recommendations: {e}")
         return jsonify({"error": str(e)}), 500

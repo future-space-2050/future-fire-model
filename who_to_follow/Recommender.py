@@ -13,7 +13,6 @@ class Recommender:
             sim_vectors = list(enumerate(self.cosine_sim_model))
             sim_vectors = sorted(sim_vectors, key=lambda x: x[1], reverse=True)
             sim_vectors = sim_vectors[1:self.top + 1]
-            user_indices = [i[0] for i in sim_vectors]
-            return user_indices
+            return sim_vectors
         except Exception as e:
             raise RecommenderError(f"Error getting recommendations: {e}")
