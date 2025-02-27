@@ -12,6 +12,7 @@ def calculate_similarities(preprocessed_data, user_index):
     """Calculate cosine similarities between the target user and all other users."""
     data_matrix = preprocessed_data.values
     target_vector = data_matrix[user_index].reshape(1, -1)
+    print("Calculating cosine similarities")
     return cosine_similarity(target_vector, data_matrix).flatten()
 
 
@@ -28,14 +29,24 @@ def load_data(filename=r"who_to_follow\DataSet\User_profile.csv"):
 
 def runner(user_data):
     data = load_data()
-    user = User(user_data=user_data)
-    user = user.to_data_frame()
-    data_preprocessor = DataPreprocessor(data, user)
+    print("Loading data")
+
+    print("Converting user data to DataFrame")
+    data_preprocessor = DataPreprocessor(data, user_data)
+    print("Preprocessing data")
     preprocessed_data = data_preprocessor.preprocess()
+    print("Calculating cosine similarities")
     cosine_similarities = calculate_similarities(preprocessed_data, data_preprocessor.get_user_index())
-    recommender = Recommender(preprocessed_data, cosine_similarities, top=2)
+    print("Creating recommendations")
+    recommender = Recommender(preprocessed_data, cosine_similarities, top=20)
+    print("Getting recommendations")
     recommendations = recommender.get_recommendations()
+    print(recommendations)
+    print("Converting recommendations to DataFrame")
     data_frame_recommendations = data.iloc[recommendations]
+    print("Converting DataFrame to JSON")
+    print(data_frame_json(data_frame_recommendations))
+    
     return data_frame_json(data_frame_recommendations)
     
     

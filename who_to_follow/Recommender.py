@@ -12,6 +12,7 @@ class Recommender:
         try:
             sim_vectors = list(enumerate(self.cosine_sim_model))
             sim_vectors = sorted(sim_vectors, key=lambda x: x[1], reverse=True)
+            sim_vectors = [x[0] for x in sim_vectors]
             sim_vectors = sim_vectors[1:self.top + 1]
             return sim_vectors
         except Exception as e:

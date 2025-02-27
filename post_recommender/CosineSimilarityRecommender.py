@@ -16,12 +16,11 @@ class CosineSimilarityRecommender:
         # Preserve original post IDs and indices
         self.posts_df = posts_df
         
-          # Store original IDs
-        
+         
         self.user_data = user_data
         
         self.embedder = SentenceTransformer('all-MiniLM-L6-v2', device='cpu')
-        self.embedder = quantize(model_size="8bit")
+        self.embedder.half()
         
         self.post_embeddings = self._get_cached_embeddings()
         self.post_embeddings = self._normalize(self.post_embeddings)
@@ -63,7 +62,7 @@ class CosineSimilarityRecommender:
         
         user_data = self.user_data
 
-        profile_text = f"{user_data['Profession']} {user_data['Interests']} {user_data['Interest_Categories']}"
+        profile_text = f"{user_data['occupation']} {user_data['interests']} {user_data['interestCategories']}"
         profile_emb = self.embedder.encode(profile_text)
         profile_emb = self._normalize(profile_emb.reshape(1, -1))[0]
 
@@ -143,7 +142,7 @@ class CosineSimilarityRecommender:
             return final_recs[:top_n]
         
         except KeyError:
-            print(f"User {user_id} not found, returning popular posts")
+            print(f"User {self.user_id} not found, returning popular posts")
             return self.posts_df.sample(top_n)['post_id'].tolist()
         except Exception as e:
             print(f"Recommendation error: {str(e)}")

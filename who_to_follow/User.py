@@ -60,7 +60,7 @@ class User:
         logger.debug(f"Interests set to: {self.interests}")
 
     def _set_get_interest_categories(self):
-        self.interest_categories = self.user_data.get("interest_categories", "") or "Unknown"
+        self.interest_categories = self.user_data.get("interestCategories", "") or "Unknown"
         logger.debug(f"Interest categories set to: {self.interest_categories}")
 
     def _set_get_birth_date(self):
@@ -103,7 +103,6 @@ class User:
 
         try:
             print("Mapping")
-            # Ensure that city is not None before calling .strip()
             city_clean = self.city.strip().lower() if self.city and isinstance(self.city, str) else None
             print(city_clean)
             
@@ -132,16 +131,16 @@ class User:
 
     def to_dict(self):
         return {
-            "User_ID": self.user_id,
-            "Name": self.name,
-            "Birth_Date": self.birth_date.isoformat() if self.birth_date else None,
-            "Age": self.age,
-            "City": self.city,
-            "Profession": self.profession,
-            "Latitude": self.latitude,
-            "Longitude": self.longitude,
-            "Interests": self.interests,
-            "Interest_Categories": self.interest_categories
+            "userID": self.user_id,
+            "fullName": self.name,
+            "dateOfBirth": self.birth_date.isoformat() if self.birth_date else None,
+            "age": self.age,
+            "location": self.city,
+            "occupation": self.profession,
+            "latitude": self.latitude,
+            "longitude": self.longitude,
+            "interests": self.interests,
+            "interestCategories": self.interest_categories
         }
         
     def to_dataframe(self):
@@ -155,8 +154,8 @@ class User:
             if os.path.exists(USER_FILE_PATH):
                 existing_df = pd.read_csv(USER_FILE_PATH)
                 
-                if self.user_id in existing_df["User_ID"].values:
-                    existing_df.loc[existing_df['User_ID'] == self.user_id, :] = df.values[0]
+                if self.user_id in existing_df["userID"].values:
+                    existing_df.loc[existing_df['UserID'] == self.user_id, :] = df.values[0]
                     logger.info(f"User data updated for user ID: {self.user_id}")
                 else:
                     existing_df = pd.concat([existing_df, df], ignore_index=True)

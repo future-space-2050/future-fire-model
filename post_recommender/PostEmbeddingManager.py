@@ -21,7 +21,14 @@ class PostEmbeddingManager:
             if embeddings.shape[0] == 0:
                 print("Embeddings file is empty - waiting for first entries")
         else:
-            raise FileNotFoundError("Embeddings file missing after initialization check")
+            # Calculate Embeddings
+            embeddings = np.array([
+                self._generate_embedding(post['category'] if post['category'] else " " + " " + post['content'] if post['content'] else " ")
+                for post in pd.read_csv(self.post_file_path).to_dict('records')
+            ])
+            # save 
+            np.save(self.post_embeddings_file, embeddings)
+        
 
     def _generate_embedding(self, text):
         """Generate embedding for a single text input"""

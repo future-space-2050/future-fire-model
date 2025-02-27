@@ -10,7 +10,7 @@ from post_recommender.PostEmbeddingManager import *
 from who_to_follow.User import User
 from who_to_follow.DataProcessor import DataPreprocessor
 from sklearn.metrics.pairwise import cosine_similarity
-from who_to_follow.Modeling import calculate_similarities
+from who_to_follow.Modeling import calculate_similarities, runner
 from who_to_follow.Recommender import Recommender
 from who_to_follow.simmilarity_calculator import calculate_cosine_simmilarity
 
@@ -63,11 +63,11 @@ def get_post_recommendations():
     try:
         logger.info("==== Received request for post recommendations")
         user_id = request.args.get('user_id', type=int)
-        single_user = data[data['User_ID'] == user_id]
+        single_user = data[data['userID'] == user_id]
         
         if single_user.empty:
             return jsonify({"error": "User not found"}), 404
-        single_user = single_user[["Profession", "Interests", "Interest_Categories",]]
+        single_user = single_user[["occupation", "interests", "interestCategories",]]
         recommender = CosineSimilarityRecommender(posts_df=posts_dataframe, user_data=single_user)
         recommended_post_ids = recommender.recommend(11, use_faiss=False)
         post_contents = [{"post_id": pid, "content": posts_dataframe.loc[posts_dataframe["post_id"] == pid, "content"].values[0]} for pid in recommended_post_ids]
@@ -89,21 +89,23 @@ def get_user_recommendations():
 
         logger.info(f"Received recommendation request for user_id: {user_id}")
         
-        # Ensure `data` is available and contains 'User_ID'
-        if user_id not in data['User_ID'].values:
+        # Ensure `data` is available and contains 'userID'
+        if user_id not in data['userID'].values:
             return jsonify({"error": "User not found"}), 404
-
-        recommended_profiles = calculate_cosine_simmilarity(user_id)
-
-        # Convert the recommended profiles list to a DataFrame
-        recommended_profiles_df = pd.DataFrame(recommended_profiles)
-
-        # Check if the DataFrame is empty
-        if recommended_profiles_df.empty:
+        
+        user_df = data[ data['userID'] == user_id]
+        print("Heree")
+        
+        # 
+        
+        recommended_profiles = runner(user_df)
+        
+        print(recommended_profiles)
+        if len(recommended_profiles) == 0:
             return jsonify({"message": "No recommendations found"}), 200
 
         # Return the DataFrame as JSON
-        return jsonify(recommended_profiles_df.to_dict(orient='records'))
+        return recommended_profiles
         
     except Exception as e:
         logger.error(f"Error getting user recommendations: {e}")
@@ -130,34 +132,40 @@ def fetch_external_posts():
         
 
 def fetch_and_process_user_data():
+    
     while True:
         logger.info("==== Fetching and processing user data ====")
-        api_url = "https://future-fire-backend.onrender.com/auth/users/model?type=4"
+        api_url = "https://future-fire-backend.onrender.com/auth/users/model?type=2"
         try:
             data = get_api_response(api_url, timeout=20)
             
             if data and "data" in data:
                 for user_info in data["data"]:
                     user = User(user_info)
-                    user.update_user_data(data)
                     user.save()
                     logger.info(f"Saved user data for user_id: {user.user_id}")
         except APIError as ae:
             logger.error(f"API Error: {str(ae)}")
-            
+        
+        data = pd.read_csv(USERS_FILE_PATH)
         time.sleep(3600)
+            
 
 
 def start_flask_app():
     app.run(debug=True, use_reloader=False)
 
 if __name__ == "__main__":
+    
     post_fetch_thread = threading.Thread(target=fetch_external_posts)
     user_data_fetch_thread = threading.Thread(target=fetch_and_process_user_data)
     flask_thread = threading.Thread(target=start_flask_app)
     
     post_fetch_thread.start()
     flask_thread.start()
+    user_data_fetch_thread.start()
+
     
     post_fetch_thread.join()
     flask_thread.join()
+    user_data_fetch_thread.join()

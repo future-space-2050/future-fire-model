@@ -3,9 +3,8 @@ from venv import logger
 import requests
 from flask import Flask, request, jsonify
 from Recommender import Recommender
-from ErrorMessage import RecommenderError
+from error_message import RecommenderError
 from DataProcessor import DataPreprocessor
-from sklearn.metrics.pairwise import cosine_similarity
 from Modeling import calculate_similarities
 from requests import *
 from User import *

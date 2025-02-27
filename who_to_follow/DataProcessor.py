@@ -25,48 +25,48 @@ class DataPreprocessor:
             raise DataPreprocessorError(f"Error converting list to string: {e}")
 
     def one_hot_encode(self):
-        """One-hot encode categorical features like Interests, Interest Categories, City, Gender, and Profession."""
+        """One-hot encode categorical features like interests, Interest Categories, locationCity, gender, and occupation."""
         try:
-            self.data["Interests"] = self.data["Interests"].apply(self.list_to_string)
-            self.data["Interest_Categories"] = self.data["Interest_Categories"].apply(self.list_to_string)
+            self.data["interests"] = self.data["interests"].apply(self.list_to_string)
+            self.data["interestCategories"] = self.data["interestCategories"].apply(self.list_to_string)
 
-            self.data["Interests"] = self.data["Interests"].str.split(", ")
-            self.data["Interest_Categories"] = self.data["Interest_Categories"].str.split(", ")
+            self.data["interests"] = self.data["interests"].str.split(", ")
+            self.data["interestCategories"] = self.data["interestCategories"].str.split(", ")
 
             mlb_interests = MultiLabelBinarizer()
             mlb_categories = MultiLabelBinarizer()
             interests_encoded = pd.DataFrame(
-                mlb_interests.fit_transform(self.data["Interests"]),
-                columns=[f"Interest_{x}" for x in mlb_interests.classes_],
+                mlb_interests.fit_transform(self.data["interests"]),
+                columns=[f"interest_{x}" for x in mlb_interests.classes_],
                 index=self.data.index
             )
             categories_encoded = pd.DataFrame(
-                mlb_categories.fit_transform(self.data["Interest_Categories"]),
-                columns=[f"Category_{x}" for x in mlb_categories.classes_],
+                mlb_categories.fit_transform(self.data["interestCategories"]),
+                columns=[f"category_{x}" for x in mlb_categories.classes_],
                 index=self.data.index
             )
 
-            self.data = self.data.drop(columns=["Interests", "Interest_Categories"])
+            self.data = self.data.drop(columns=["interests", "interestCategories"])
             self.data = pd.concat([self.data, interests_encoded, categories_encoded], axis=1)
 
-            self.data = pd.get_dummies(self.data, columns=["City", "Profession"], drop_first=True)
+            self.data = pd.get_dummies(self.data, columns=["location", "occupation"], drop_first=True)
             return self.data
         except Exception as e:
             raise DataPreprocessorError(f"Error during one-hot encoding: {e}")
 
     def drop_columns(self):
-        """Drop unnecessary columns like User ID, Name, and Birth Date."""
+        """Drop unnecessary columns like User ID, fullName, and Birth Date."""
         try:
-            self.data = self.data.drop(columns=[ 'Name', 'Birth_Date', "Gender"])
+            self.data = self.data.drop(columns=[ 'fullName', 'dateOfBirth', "gender"])
             return self.data
         except Exception as e:
             raise DataPreprocessorError(f"Error during column dropping: {e}")
 
     def normalize(self):
-        """Normalize numerical features like Latitude, Longitude, and Age."""
+        """Normalize numerical features like latitude, longitude, and age."""
         try:
             scaler = MinMaxScaler()
-            numerical_columns = ["Latitude", "Longitude", "Age"]
+            numerical_columns = ["latitude", "longitude", "age"]
             self.data[numerical_columns] = scaler.fit_transform(self.data[numerical_columns])
 
             self.data["distance"] = 1 - self.data["distance"]
@@ -100,11 +100,11 @@ class DataPreprocessor:
             print("Data shape", self.user.shape)
             self.data["distance"] = 0
             
-            user_lat = self.user.iloc[0]["Latitude"]
-            user_long = self.user.iloc[0]["Longitude"]
+            user_lat = self.user.iloc[0]["latitude"]
+            user_long = self.user.iloc[0]["longitude"]
 
             print("Distance", user_lat, user_long)
-            self.data["distance"] = (self.data["Latitude"] - user_lat) ** 2 + (self.data["Longitude"] - user_long) ** 2
+            self.data["distance"] = (self.data["latitude"] - user_lat) ** 2 + (self.data["longitude"] - user_long) ** 2
             self.data["distance"] = self.data["distance"] ** 0.5
             return self.data
             
@@ -122,20 +122,15 @@ class DataPreprocessor:
             DataPreprocessorError: If there's an error during the check.
         """
         try:
-            # Check if user data is empty
             if self.user.empty:
                 logger.warning("User data is empty.")
                 return None
-            
-            # Extract user ID safely
-            user_id = self.user["User_ID"].iloc[0]  # Use iloc to avoid SettingWithCopyWarning
-            
-            # Check if the user exists in the dataset
-            user_exists = self.data["User_ID"].eq(user_id).any()
+         
+            user_id = self.user["userID"].iloc[0] 
+            user_exists = self.data["userID"].eq(user_id).any()
             
             if user_exists:
-                # Get the first occurrence's index (assuming User_IDs are unique)
-                user_index = self.data.index[self.data["User_ID"] == user_id].tolist()[0]
+                user_index = self.data.index[self.data["userID"] == user_id].tolist()[0]
                 return user_index
             else:
                 return None
@@ -150,14 +145,19 @@ class DataPreprocessor:
     def preprocess(self):
         try:
             self.data = self.add_user()
-            self.data = self.data.drop(columns=["User_ID"])
+            self.data = self.data.drop(columns=["userID"])
             self.data = self.distance_from_user()
             self.data = self.one_hot_encode()
             self.data = self.drop_columns()
             self.data = self.normalize()
-            # Check for NaN values
             if self.data.isna().any().any():
-                raise DataPreprocessorError("NaN values detected after preprocessing.")
+                print(self.data)
+                # fillwith zero
+                self.data.fillna(0, inplace=True)
+                print(self.data)
+                # raise an error if NaN values remain after preprocessing
+                if self.data.isna().any().any():
+                    raise DataPreprocessorError("NaN values detected after preprocessing.")
             return self.data
         except Exception as e:
             raise DataPreprocessorError(f"Error during preprocessing: {e}")
