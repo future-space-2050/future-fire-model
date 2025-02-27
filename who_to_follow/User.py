@@ -94,7 +94,6 @@ class User:
         logger.debug(f"Age calculated as: {self.age}")
 
     def __location_mapping(self):
-        print("Location")
         if not self.city:
             logger.info("No city specified for location mapping")
             self.latitude = 8
@@ -102,9 +101,7 @@ class User:
             return
 
         try:
-            print("Mapping")
             city_clean = self.city.strip().lower() if self.city and isinstance(self.city, str) else None
-            print(city_clean)
             
             if city_clean:
                 city_coordinates = self._coordinates[

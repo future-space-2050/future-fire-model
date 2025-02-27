@@ -11,17 +11,14 @@ class PostEmbeddingManager:
         self.post_embeddings_file = post_embeddings_file
         self.embedder = SentenceTransformer('all-MiniLM-L6-v2')
         
-        
-        # Initialize empty data structures if files don't exist
         if not os.path.exists(self.post_file_path):
             pd.DataFrame(columns=['post_id', 'category', 'content']).to_csv(self.post_file_path, index=False)
-        # Safe loading with existence check
+        
         if os.path.exists(self.post_embeddings_file):
             embeddings = np.load(self.post_embeddings_file, allow_pickle=False)
             if embeddings.shape[0] == 0:
                 print("Embeddings file is empty - waiting for first entries")
         else:
-            # Calculate Embeddings
             embeddings = np.array([
                 self._generate_embedding(post['category'] if post['category'] else " " + " " + post['content'] if post['content'] else " ")
                 for post in pd.read_csv(self.post_file_path).to_dict('records')
@@ -103,22 +100,3 @@ class PostEmbeddingManager:
     
     def get_dataframe(self):
         return self.posts_df
-
-# if __name__ == "__main__":
-#     post_manager = PostEmbeddingManager(
-#         post_file_path="posts.csv",
-#         post_embeddings_file="post_embeddings.npy"
-#     )
-
-#     new_post = {
-#         'post_id': '1009we',
-#         'category': 'technology',
-#         'content': 'New breakthroughs in AI research show promising results...'
-#     }
-                    
-#     print("Updated embeddings shape:", post_manager.get_latest_embeddings().shape)
-#     print("Updated embeddings shape:", post_manager.get_latest_embeddings().shape)
-
-#     post_manager.add_post(new_post)
-
-#     print("Updated embeddings shape:", post_manager.get_latest_embeddings().shape)

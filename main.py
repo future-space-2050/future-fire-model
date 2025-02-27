@@ -74,7 +74,7 @@ def get_post_recommendations():
         return jsonify({"recommended_posts": post_contents})
     except Exception as e:
         logger.error(f"Error getting post recommendations: {e}")
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error post recommendation": str(e)}), 500
 
 
 
@@ -94,13 +94,9 @@ def get_user_recommendations():
             return jsonify({"error": "User not found"}), 404
         
         user_df = data[ data['userID'] == user_id]
-        print("Heree")
-        
-        # 
         
         recommended_profiles = runner(user_df)
         
-        print(recommended_profiles)
         if len(recommended_profiles) == 0:
             return jsonify({"message": "No recommendations found"}), 200
 
@@ -109,10 +105,7 @@ def get_user_recommendations():
         
     except Exception as e:
         logger.error(f"Error getting user recommendations: {e}")
-        return jsonify({"error": str(e)}), 500
-
-
-
+        return jsonify({"error who to follow": str(e)}), 500
 
 def fetch_external_posts():
     while True:
