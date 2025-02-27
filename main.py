@@ -96,13 +96,11 @@ def get_user_recommendations():
         user_df = data[ data['userID'] == user_id]
         
         recommended_profiles = runner(user_df)
-        
         if len(recommended_profiles) == 0:
             return jsonify({"message": "No recommendations found"}), 200
 
         # Return the DataFrame as JSON
         return recommended_profiles
-        
     except Exception as e:
         logger.error(f"Error getting user recommendations: {e}")
         return jsonify({"error who to follow": str(e)}), 500

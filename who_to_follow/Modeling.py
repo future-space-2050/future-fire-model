@@ -16,7 +16,7 @@ def calculate_similarities(preprocessed_data, user_index):
     return cosine_similarity(target_vector, data_matrix).flatten()
 
 
-def load_data(filename=r"who_to_follow\DataSet\User_profile.csv"):
+def load_data(filename=r"DataSet\User_profile.csv"):
     """Load data from a CSV file."""
     try:
         return pd.read_csv(filename)
