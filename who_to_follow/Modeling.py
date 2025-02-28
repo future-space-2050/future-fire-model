@@ -34,7 +34,7 @@ def runner(user_data, USERS_FILE_PATH):
     cosine_similarities = calculate_similarities(preprocessed_data, data_preprocessor.get_user_index())
     recommender = Recommender(preprocessed_data, cosine_similarities, top=20)
     recommendations = recommender.get_recommendations()
-    data_frame_recommendations = data.iloc[recommendations]
+    data_frame_recommendations = data.iloc[recommendations]["userID"]
     return data_frame_json(data_frame_recommendations)
     
     
