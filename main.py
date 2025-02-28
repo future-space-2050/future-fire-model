@@ -95,7 +95,7 @@ def get_user_recommendations():
         
         user_df = data[ data['userID'] == user_id]
         
-        recommended_profiles = runner(user_df)
+        recommended_profiles = runner(user_df, USERS_FILE_PATH)
         if len(recommended_profiles) == 0:
             return jsonify({"message": "No recommendations found"}), 200
 
