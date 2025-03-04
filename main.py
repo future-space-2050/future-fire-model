@@ -1,4 +1,5 @@
 import time
+from xml.dom import ValidationErr
 import requests
 import logging
 import pandas as pd
@@ -140,8 +141,99 @@ def fetch_and_process_user_data():
         
         data = pd.read_csv(USERS_FILE_PATH)
         time.sleep(3600)
-            
 
+     
+@app.route('/get_users', methods=['GET'])
+def get_users_data():
+    """Endpoint to fetch user data from CSV or external API"""
+    try:
+        logger.info(f"Request received from {request.remote_addr} for user data")
+        
+        # Validate and parse input parameter
+        try:
+            data_type = int(request.args.get('type', -1))
+        except ValueError:
+            logger.warning(f"Invalid type parameter format: {request.args.get('type')}")
+            return jsonify({"error": "Type must be an integer"}), 400
+
+        # Handle CSV data request
+        if data_type == -1:
+            try:
+                df = pd.read_csv("DataSets/User_profile.csv", usecols=[
+                    'userID', 'fullName', 'occupation', 'interests', 'location'
+                ])
+                logger.info(f"Returning {len(df)} users from CSV")
+                return jsonify({"users": df.where(pd.notnull(df), None).to_dict(orient='records')}), 200
+            except FileNotFoundError:
+                logger.error("User profile CSV file not found")
+                return jsonify({"error": "Data source unavailable"}), 503
+
+        # Handle API-based requests
+        elif 1 <= data_type <= 4:
+            api_url = f"https://future-fire-backend.onrender.com/auth/users/model?type={data_type}"
+            
+            try:
+                # Make API call with timeout and retry logic
+                response = requests.get(
+                    api_url,
+                    timeout=(3.05, 20),  # Connect timeout 3s, read timeout 20s
+                    headers={'Accept': 'application/json'}
+                )
+                response.raise_for_status()
+
+                # Parse and validate response
+                data = response.json()
+                if not isinstance(data.get('data'), list):
+                    logger.error("Invalid API response format")
+                    return jsonify({"error": "Unexpected data format"}), 502
+
+                # Process users
+                processed_users = pd.DataFrame()
+                for user_info in data["data"]:
+                    try:
+                        user = User(user_data=user_info)
+                        processed_user = user.to_dataframe()
+                        processed_users = pd.concat(
+                            [processed_users, processed_user],
+                            axis=0,
+                            ignore_index=True
+                        )
+                    except ValidationErr as ve:
+                        logger.warning(f"Skipping invalid user data: {str(ve)}")
+                        continue
+                processed_users = processed_users[['userID', 'fullName', 'occupation', 'interests', 'location']]
+                processed_users = processed_users.where(pd.notnull(processed_users), None).to_dict(orient='records')
+
+                logger.info(f"Returning {len(processed_users)} processed users from API")
+                return jsonify({
+                    "users": processed_users,
+                    "metadata": {
+                        "source": api_url,
+                        "count": len(processed_users)
+                    }
+                }), 200
+
+            except requests.exceptions.Timeout:
+                logger.error("API request timed out")
+                return jsonify({"error": "External service timeout"}), 504
+            except requests.exceptions.JSONDecodeError:
+                logger.error("Failed to decode API response")
+                return jsonify({"error": "Invalid API response"}), 502
+            except requests.exceptions.RequestException as e:
+                logger.error(f"API connection error: {str(e)}")
+                return jsonify({"error": "External service unavailable"}), 503
+
+        # Handle invalid type parameters
+        else:
+            logger.warning(f"Invalid type parameter: {data_type}")
+            return jsonify({
+                "error": "Invalid request parameter",
+                "valid_values": [-1, 1, 2, 3, 4]
+            }), 400
+
+    except Exception as e:
+        logger.critical(f"Critical error: {str(e)}", exc_info=True)
+        return jsonify({"error": "Internal server error"}), 500    
 
 def start_flask_app():
     app.run(debug=True, use_reloader=False)
